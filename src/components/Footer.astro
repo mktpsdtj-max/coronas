@@ -1,0 +1,42 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__brand">
+      <div class="footer__logo"><span class="material-symbols-outlined">sentiment_satisfied</span></div>
+      <span class="footer__name">{t('brand.name')}</span>
+    </div>
+    <p class="footer__legal">{t('footer.legal')}</p>
+  </div>
+</footer>
+
+<style>
+  .footer { background: #fff; padding: 40px 0; border-top: 1px solid var(--psd-blue-100); }
+  .footer__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  @media (min-width: 640px) { .footer__inner { flex-direction: row; } }
+  .footer__brand { display: flex; align-items: center; gap: 8px; }
+  .footer__logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--psd-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .footer__logo :global(.material-symbols-outlined) { color: #fff; font-size: 14px; }
+  .footer__name { font-size: 14px; font-weight: 700; color: var(--psd-primary); }
+  .footer__legal { font-size: 12px; color: var(--psd-text-muted); text-align: center; margin: 0; }
+</style>

@@ -1,0 +1,126 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<div class="video-modal" id="psd-video-modal" data-empty-msg={t('video.empty')}>
+  <div class="video-modal__backdrop" data-close></div>
+  <div class="video-modal__dialog" role="dialog" aria-modal="true">
+    <button class="video-modal__close" data-close aria-label={t('video.close')}>
+      <span class="material-symbols-outlined">close</span>
+    </button>
+    <div class="video-modal__content" id="psd-video-modal-content"></div>
+  </div>
+</div>
+
+<style>
+  .video-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .video-modal.is-open { display: flex; }
+  .video-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 10, 25, 0.88);
+    cursor: pointer;
+  }
+  .video-modal__dialog { position: relative; width: 100%; max-width: 900px; z-index: 1; }
+  .video-modal__close {
+    position: absolute;
+    top: -48px;
+    right: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  .video-modal__close:hover { background: rgba(255, 255, 255, 0.3); }
+  .video-modal__content {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-2);
+  }
+  .video-modal__content :global(video),
+  .video-modal__content :global(iframe) { width: 100%; height: 100%; border: 0; display: block; }
+  .video-modal__content :global(.video-modal__empty) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    text-align: center;
+    padding: 24px;
+  }
+</style>
+
+<script>
+  const modal = document.getElementById('psd-video-modal');
+  const content = document.getElementById('psd-video-modal-content');
+
+  if (modal && content) {
+    const emptyMsg = modal.dataset.emptyMsg ?? '';
+    let lastTrigger: HTMLElement | null = null;
+
+    function openModal(frame: HTMLElement) {
+      const src = frame.dataset.videoSrc ?? '';
+      const type = frame.dataset.videoType ?? 'mp4';
+      const poster = frame.dataset.videoPoster ?? '';
+      lastTrigger = frame;
+
+      if (!src) {
+        content!.innerHTML = `<div class="video-modal__empty">${emptyMsg}</div>`;
+      } else if (type === 'youtube' || type === 'vimeo') {
+        const sep = src.includes('?') ? '&' : '?';
+        content!.innerHTML =
+          `<iframe src="${src}${sep}autoplay=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+      } else {
+        content!.innerHTML =
+          `<video src="${src}"${poster ? ` poster="${poster}"` : ''} controls autoplay playsinline></video>`;
+      }
+
+      modal!.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      modal!.classList.remove('is-open');
+      content!.innerHTML = '';
+      document.body.style.overflow = '';
+      lastTrigger?.focus();
+    }
+
+    // Delegación de eventos: funciona con cualquier número de videos en la página
+    document.addEventListener('click', (e) => {
+      const frame = (e.target as HTMLElement).closest<HTMLElement>('.video-frame-inner');
+      if (frame) { openModal(frame); return; }
+      if ((e.target as HTMLElement).closest('[data-close]')) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      const frame = (e.target as HTMLElement).closest<HTMLElement>('.video-frame-inner');
+      if (frame && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openModal(frame); }
+      if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+    });
+  }
+</script>

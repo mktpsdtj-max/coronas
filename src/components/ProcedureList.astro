@@ -1,0 +1,91 @@
+---
+// Sección en grid: imagen a la izquierda, lista de puntos con ícono a la derecha.
+export interface ProcedureItem { icon: string; /** admite <strong> */ text: string; }
+
+export interface ProcedureData {
+  id: string;
+  eyebrow: string;
+  heading: string;
+  image: { src: string; alt: string };
+  items: ProcedureItem[];
+  cta?: string;
+}
+
+interface Props { data: ProcedureData; }
+const { data } = Astro.props;
+---
+
+<section id={data.id} class="section section--white">
+  <div class="container">
+    <div class="section-intro psd-reveal">
+      <span class="section-eyebrow">{data.eyebrow}</span>
+      <h2 class="section-heading">{data.heading}</h2>
+    </div>
+
+    <div class="procedure-layout">
+      <div class="psd-reveal procedure-image">
+        <img src={data.image.src} alt={data.image.alt} loading="lazy" decoding="async" />
+      </div>
+
+      <div class="procedure-list">
+        {data.items.map((item) => (
+          <div class="psd-reveal procedure-card">
+            <div class="procedure-card__icon"><span class="material-symbols-outlined">{item.icon}</span></div>
+            <p class="procedure-card__text" set:html={item.text} />
+          </div>
+        ))}
+
+        {data.cta && (
+          <div class="psd-reveal procedure-cta">
+            <a href="#contacto" class="btn btn--accent">
+              {data.cta}
+              <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span>
+            </a>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .procedure-layout { display: grid; grid-template-columns: 1fr; gap: 40px; align-items: center; }
+  @media (min-width: 1024px) { .procedure-layout { grid-template-columns: 0.9fr 1.1fr; gap: 56px; } }
+
+  .procedure-image {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    aspect-ratio: 4 / 5;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow-2);
+  }
+  .procedure-image img { width: 100%; height: 100%; object-fit: cover; }
+
+  .procedure-list { display: flex; flex-direction: column; gap: 16px; }
+  .procedure-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: var(--psd-bg);
+    border: 1px solid var(--psd-blue-100);
+    border-radius: 16px;
+    padding: 20px;
+  }
+  .procedure-card__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--psd-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .procedure-card__icon :global(.material-symbols-outlined) { color: #fff; font-size: 20px; }
+  .procedure-card__text { font-size: 14px; color: var(--psd-text-muted); line-height: 1.6; margin: 0; }
+  .procedure-card__text :global(strong) { color: var(--psd-primary); }
+  .procedure-cta { margin-top: 4px; }
+</style>

@@ -1,0 +1,65 @@
+---
+// Sección oscura con tarjetas de beneficios.
+export interface Benefit { icon: string; title: string; text: string; }
+
+export interface BenefitsData {
+  id: string;
+  eyebrow: string;
+  heading: string;
+  items: Benefit[];
+}
+
+interface Props { data: BenefitsData; }
+const { data } = Astro.props;
+const isOdd = data.items.length % 3 === 2;
+---
+
+<section id={data.id} class="section section--dark">
+  <div class="container">
+    <div class="section-intro psd-reveal">
+      <span class="section-eyebrow section-eyebrow--light">{data.eyebrow}</span>
+      <h2 class="section-heading section-heading--light">{data.heading}</h2>
+    </div>
+
+    <div class="benefits-grid">
+      {data.items.map((item, i) => (
+        <div
+          class:list={[
+            'psd-reveal',
+            'benefit-card',
+            isOdd && i === data.items.length - 1 && 'benefit-card--last',
+          ]}
+        >
+          <span class="material-symbols-outlined">{item.icon}</span>
+          <h3 class="benefit-card__title">{item.title}</h3>
+          <p class="benefit-card__text">{item.text}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .benefits-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+  @media (min-width: 640px) { .benefits-grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1024px) { .benefits-grid { grid-template-columns: 1fr 1fr 1fr; } }
+
+  .benefit-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .benefit-card :global(.material-symbols-outlined) {
+    color: var(--psd-blue-200);
+    font-size: 30px;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .benefit-card__title { color: #fff; font-size: 16px; font-weight: 700; margin: 0 0 8px; }
+  .benefit-card__text { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.6; margin: 0; }
+
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .benefit-card--last { grid-column: 1 / -1; max-width: 50%; margin: 0 auto; }
+  }
+</style>

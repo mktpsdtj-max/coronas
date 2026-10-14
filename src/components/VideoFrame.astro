@@ -1,0 +1,114 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+
+export interface VideoData {
+  /** URL del .mp4 o del embed de YouTube/Vimeo. Vacío = muestra mensaje en el modal. */
+  src?: string;
+  type?: 'mp4' | 'youtube' | 'vimeo';
+  /** Imagen de vista previa. Puede ser un fotograma del propio video
+   *  o la miniatura automática de YouTube: https://img.youtube.com/vi/ID/maxresdefault.jpg */
+  poster: string;
+  alt: string;
+  eyebrow: string;
+  title: string;
+}
+
+interface Props {
+  lang: Lang;
+  video: VideoData;
+  /** Proporción del marco. '1/1' cuadrado (default), '4/3.4', '16/9'… */
+  ratio?: string;
+}
+
+const { lang, video, ratio = '1 / 1' } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<div class="video-frame-outer">
+  <div
+    class="video-frame-inner"
+    style={`aspect-ratio: ${ratio};`}
+    data-video-src={video.src ?? ''}
+    data-video-type={video.type ?? 'mp4'}
+    data-video-poster={video.poster}
+    role="button"
+    tabindex="0"
+    aria-label={video.title}
+  >
+    <img src={video.poster} alt={video.alt} loading="lazy" decoding="async" />
+    <div class="video-overlay"></div>
+    <span class="video-pulse-ring"></span>
+    <span class="video-play-btn" aria-hidden="true">
+      <span class="material-symbols-outlined fill-icon" style="font-size:32px;">play_arrow</span>
+    </span>
+    <div class="video-caption-chip">
+      <span class="video-eyebrow">{video.eyebrow}</span>
+      <span class="video-title">{video.title}</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .video-frame-outer {
+    padding: 3px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, var(--psd-accent), var(--psd-blue-200), var(--psd-accent-light));
+    box-shadow: var(--shadow-2);
+    max-width: 440px;
+    margin: 0 auto;
+  }
+  .video-frame-inner {
+    position: relative;
+    border-radius: 25px;
+    overflow: hidden;
+    background: var(--psd-primary-dark);
+    cursor: pointer;
+  }
+  .video-frame-inner:focus-visible { outline: 3px solid var(--psd-blue-200); outline-offset: 3px; }
+  .video-frame-inner img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+  .video-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 20, 40, 0.8), rgba(0, 20, 40, 0.15) 55%, transparent);
+  }
+  .video-pulse-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 76px;
+    height: 76px;
+    margin: -38px 0 0 -38px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    animation: video-pulse 2.2s infinite;
+  }
+  .video-play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    transition: transform 0.25s ease;
+  }
+  .video-frame-inner:hover .video-play-btn { transform: translate(-50%, -50%) scale(1.08); }
+  .video-play-btn :global(.material-symbols-outlined) { color: var(--psd-primary); }
+
+  .video-caption-chip { position: absolute; bottom: 18px; left: 18px; right: 18px; color: #fff; }
+  .video-eyebrow {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--psd-blue-200);
+    margin-bottom: 4px;
+  }
+  .video-title { font-size: 15px; font-weight: 700; line-height: 1.3; }
+</style>

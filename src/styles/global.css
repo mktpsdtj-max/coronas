@@ -1,0 +1,135 @@
+/* ============================================================ */
+/* PERFECT SMILE DENTAL — SISTEMA DE DISEÑO GLOBAL              */
+/* Tokens + primitivas compartidas por todas las páginas.        */
+/* Los estilos específicos de cada componente viven en su        */
+/* propio archivo .astro dentro de <style> (scoped).             */
+/* ============================================================ */
+
+:root {
+    --psd-primary: #003e7a;
+    --psd-primary-dark: #001b3c;
+    --psd-accent: #0055a4;
+    --psd-accent-light: #175ead;
+    --psd-blue-100: #d5e3ff;
+    --psd-blue-200: #afccff;
+    --psd-bg: #f5f8fc;
+    --psd-surface: #ffffff;
+    --psd-text-muted: #566067;
+    --psd-savings: #0f9d58;
+    --shadow-1: 0px 4px 20px rgba(0, 30, 70, 0.06);
+    --shadow-2: 0px 12px 36px rgba(0, 30, 70, 0.12);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: var(--psd-bg);
+    color: var(--psd-primary);
+    -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+}
+.material-symbols-outlined.fill-icon { font-variation-settings: 'FILL' 1; }
+
+.container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+@media (min-width: 1024px) { .container { padding: 0 40px; } }
+
+/* ============================================================ */
+/* ANIMACIONES                                                   */
+/* ============================================================ */
+@keyframes psd-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(0, 85, 164, 0.35); }
+    70%  { box-shadow: 0 0 0 10px rgba(0, 85, 164, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 85, 164, 0); }
+}
+.psd-pulse-dot { animation: psd-pulse 2s infinite; }
+
+@keyframes video-pulse {
+    0%   { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+
+.psd-reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.psd-reveal.psd-visible { opacity: 1; transform: translateY(0); }
+
+/* Respeta la preferencia de movimiento reducido del sistema */
+@media (prefers-reduced-motion: reduce) {
+    .psd-reveal { opacity: 1; transform: none; transition: none; }
+    .psd-pulse-dot, .video-pulse-ring { animation: none; }
+}
+
+/* ============================================================ */
+/* BOTONES                                                       */
+/* ============================================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    padding: 14px 24px;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color .2s ease, color .2s ease;
+}
+.btn--sm { padding: 10px 20px; }
+.btn--accent { background: var(--psd-accent); color: #fff; }
+.btn--accent:hover { background: var(--psd-accent-light); }
+.btn--outline { background: #fff; color: var(--psd-primary); border: 1px solid var(--psd-blue-200); }
+.btn--outline:hover { background: var(--psd-blue-100); }
+.btn--white { background: #fff; color: var(--psd-primary); box-shadow: var(--shadow-2); }
+.btn--white:hover { background: var(--psd-blue-100); }
+.btn--ghost-light { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.4); }
+.btn--ghost-light:hover { background: rgba(255,255,255,0.2); }
+.btn--outline-light { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.4); }
+.btn--outline-light:hover { background: rgba(255,255,255,0.12); }
+.btn--full { width: 100%; justify-content: center; }
+@media (min-width: 640px) { .btn--full { width: auto; } }
+
+/* ============================================================ */
+/* SECCIONES — primitivas compartidas                            */
+/* ============================================================ */
+.section { padding: 80px 0; }
+@media (min-width: 1024px) { .section { padding: 112px 0; } }
+.section--white { background: #fff; border-top: 1px solid var(--psd-blue-100); }
+.section--dark { background: var(--psd-primary); }
+
+.section-eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--psd-accent);
+    margin-bottom: 12px;
+}
+.section-eyebrow--light { color: var(--psd-blue-200); }
+
+.section-heading {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--psd-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin: 0;
+}
+@media (min-width: 640px) { .section-heading { font-size: 36px; } }
+.section-heading--light { color: #fff; }
+
+.section-intro { max-width: 640px; margin-bottom: 56px; }
+.section-text { font-size: 16px; color: var(--psd-text-muted); line-height: 1.6; margin-top: 16px; }

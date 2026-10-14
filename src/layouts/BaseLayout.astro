@@ -1,0 +1,85 @@
+---
+import '../styles/global.css';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import VideoModal from '../components/VideoModal.astro';
+import type { Lang } from '../i18n/ui';
+import type { NavLink } from '../data/content';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  navLinks: NavLink[];
+  /** URL de la misma página en el otro idioma */
+  altHref: string;
+}
+
+const { lang, title, description, navLinks, altHref } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- hreflang: le dice a Google que son la misma página en dos idiomas -->
+    <link rel="alternate" hreflang={lang === 'es' ? 'en' : 'es'} href={new URL(altHref, Astro.site)} />
+    <link rel="alternate" hreflang={lang} href={canonical} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+
+    <!-- Fuentes: preconnect acelera la descarga -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <Navbar lang={lang} links={navLinks} altHref={altHref} />
+
+    <main>
+      <slot />
+    </main>
+
+    <Footer lang={lang} />
+    <VideoModal lang={lang} />
+
+    <script>
+      // ---------- Scroll reveal (global, una sola vez por página) ----------
+      const revealEls = document.querySelectorAll('.psd-reveal');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('psd-visible');
+                io.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.15 }
+        );
+        revealEls.forEach((el) => io.observe(el));
+      } else {
+        revealEls.forEach((el) => el.classList.add('psd-visible'));
+      }
+    </script>
+  </body>
+</html>

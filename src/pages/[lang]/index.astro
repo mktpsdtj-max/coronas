@@ -1,0 +1,41 @@
+---
+// ============================================================
+// Genera /es/ y /en/ — este subdominio es solo Coronas Dentales.
+// ============================================================
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HeroGallery from '../../components/heroes/HeroGallery.astro';
+import SystemSection from '../../components/SystemSection.astro';
+import WhyTijuana from '../../components/WhyTijuana.astro';
+import BenefitsGrid from '../../components/BenefitsGrid.astro';
+import ProcedureList from '../../components/ProcedureList.astro';
+import CtaFinal from '../../components/CtaFinal.astro';
+import content, { type PageContent } from '../../data/content';
+import type { Lang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return (Object.keys(content) as Lang[]).map((lang) => ({
+    params: { lang },
+    props: { lang, data: content[lang] },
+  }));
+}
+
+interface Props { lang: Lang; data: PageContent; }
+const { lang, data } = Astro.props;
+
+const altHref = lang === 'es' ? '/en/' : '/es/';
+---
+
+<BaseLayout
+  lang={lang}
+  title={data.seo.title}
+  description={data.seo.description}
+  navLinks={data.nav}
+  altHref={altHref}
+>
+  <HeroGallery lang={lang} data={data.hero} />
+  <SystemSection lang={lang} data={data.system} />
+  <WhyTijuana lang={lang} data={data.why} />
+  <BenefitsGrid data={data.benefits} />
+  <ProcedureList data={data.procedure} />
+  <CtaFinal lang={lang} data={data.cta} />
+</BaseLayout>

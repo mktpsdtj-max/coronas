@@ -1,0 +1,112 @@
+---
+// Sección "claridad técnica": video a la izquierda, copy (+ tabs opcionales) a la derecha.
+import VideoFrame, { type VideoData } from './VideoFrame.astro';
+import type { Lang } from '../i18n/ui';
+
+export interface SystemTab { label: string; title: string; text: string; }
+
+export interface SystemData {
+  id: string;
+  eyebrow: string;
+  heading: string;
+  body: string;
+  video: VideoData;
+  videoRatio?: string;
+  caption?: string;
+  tabs?: SystemTab[];
+}
+
+interface Props { lang: Lang; data: SystemData; }
+const { lang, data } = Astro.props;
+---
+
+<section id={data.id} class="section">
+  <div class="container system-grid">
+    <div class="psd-reveal system-diagram">
+      <VideoFrame lang={lang} video={data.video} ratio={data.videoRatio ?? '1 / 1'} />
+      {data.caption && <p class="diagram-caption">{data.caption}</p>}
+    </div>
+
+    <div class="psd-reveal system-copy">
+      <span class="section-eyebrow">{data.eyebrow}</span>
+      <h2 class="section-heading system-copy__heading">{data.heading}</h2>
+      <p class="section-text system-copy__body">{data.body}</p>
+
+      {data.tabs && (
+        <>
+          <div class="tabs" id="psd-tabs">
+            {data.tabs.map((tab, i) => (
+              <button type="button" data-idx={i} class:list={['tab', i === 0 && 'is-active']}>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div class="tab-panel-box">
+            {data.tabs.map((tab, i) => (
+              <div class:list={['tab-panel', i === 0 && 'is-active']} data-idx={i}>
+                <h3 class="tab-panel__title">{tab.title}</h3>
+                <p class="tab-panel__text">{tab.text}</p>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .system-grid { display: grid; grid-template-columns: 1fr; gap: 56px; align-items: center; }
+  @media (min-width: 1024px) { .system-grid { grid-template-columns: 1fr 1fr; } }
+  .system-diagram { order: 2; }
+  .system-copy { order: 1; }
+  @media (min-width: 1024px) { .system-diagram { order: 1; } .system-copy { order: 2; } }
+
+  .system-copy__heading { margin-bottom: 20px; }
+  .system-copy__body { margin-top: 0; margin-bottom: 32px; }
+  .diagram-caption { text-align: center; font-size: 12px; color: var(--psd-text-muted); margin: 12px 0 0; }
+
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+  .tab {
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    background: var(--psd-blue-100);
+    color: var(--psd-primary);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .tab.is-active { background: var(--psd-primary); color: #fff; }
+
+  .tab-panel-box {
+    background: var(--psd-bg);
+    border: 1px solid var(--psd-blue-100);
+    border-radius: 16px;
+    padding: 24px;
+    min-height: 110px;
+  }
+  .tab-panel { display: none; }
+  .tab-panel.is-active { display: block; }
+  .tab-panel__title { font-size: 16px; font-weight: 700; color: var(--psd-primary); margin: 0 0 4px; }
+  .tab-panel__text { font-size: 14px; color: var(--psd-text-muted); line-height: 1.6; margin: 0; }
+</style>
+
+<script>
+  const tabWrap = document.getElementById('psd-tabs');
+  if (tabWrap) {
+    const buttons = tabWrap.querySelectorAll<HTMLButtonElement>('.tab');
+    const panels = document.querySelectorAll<HTMLElement>('.tab-panel');
+    buttons.forEach((btn) =>
+      btn.addEventListener('click', () => {
+        const idx = btn.dataset.idx;
+        buttons.forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        panels.forEach((p) => p.classList.toggle('is-active', p.dataset.idx === idx));
+      })
+    );
+  }
+</script>

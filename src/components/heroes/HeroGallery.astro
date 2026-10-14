@@ -1,0 +1,228 @@
+---
+// HERO V4 — foto a sangre completa + galería flotante con dots. Usado en Coronas Dentales.
+import { useTranslations, type Lang } from '../../i18n/ui';
+
+export interface HeroGalleryData {
+  variant: 'gallery';
+  bg: string;
+  badge: string;
+  titleBefore: string;
+  titleAccent: string;
+  subtitle: string;
+  primaryCta: string;
+  playCta: string;
+  playHref: string;
+  gallery: { src: string; alt: string }[];
+}
+
+interface Props { lang: Lang; data: HeroGalleryData; }
+const { lang, data } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="hero-v4">
+  <div class="hero-v4__bg" style={`background-image: url('${data.bg}');`}></div>
+  <div class="hero-v4__overlay"></div>
+
+  <div class="hero-v4__container">
+    <div class="hero-v4__content">
+      <span class="hero-v4__badge">
+        <span class="material-symbols-outlined">auto_awesome</span>
+        {data.badge}
+      </span>
+
+      <h1 class="hero-v4__title">
+        {data.titleBefore}<br />
+        <span class="hero-v4__title-accent">{data.titleAccent}</span>
+      </h1>
+
+      <p class="hero-v4__subtitle">{data.subtitle}</p>
+
+      <div class="hero-v4__actions">
+        <a href="#contacto" class="btn btn--accent">
+          {data.primaryCta}
+          <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span>
+        </a>
+        <a href={data.playHref} class="hero-v4__play">
+          <span class="hero-v4__play-icon">
+            <span class="material-symbols-outlined fill-icon" style="font-size:18px;">play_arrow</span>
+          </span>
+          {data.playCta}
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-v4__gallery" id="psd-hero-gallery">
+      <div class="hero-v4__gallery-track">
+        {data.gallery.map((img, i) => (
+          <div class:list={['hero-v4__gallery-slide', i === 0 && 'is-active']} data-idx={i}>
+            <img src={img.src} alt={img.alt} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
+          </div>
+        ))}
+        <div class="hero-v4__gallery-dots">
+          {data.gallery.map((_, i) => (
+            <button
+              type="button"
+              class:list={[i === 0 && 'is-active']}
+              data-idx={i}
+              aria-label={`${t('gallery.image')} ${i + 1}`}
+            ></button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-v4 {
+    position: relative;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  @media (min-width: 768px) { .hero-v4 { min-height: 680px; } }
+
+  .hero-v4__bg { position: absolute; inset: 0; background-size: cover; background-position: center 20%; }
+  .hero-v4__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0,20,40,0.88) 0%, rgba(0,20,40,0.6) 45%, rgba(0,20,40,0.3) 75%, rgba(0,20,40,0.15) 100%);
+  }
+  .hero-v4__container {
+    position: relative;
+    z-index: 1;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 64px 24px;
+    width: 100%;
+  }
+  @media (min-width: 1024px) { .hero-v4__container { padding: 64px 40px; } }
+
+  .hero-v4__content { max-width: 560px; }
+  .hero-v4__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  .hero-v4__badge :global(.material-symbols-outlined) { font-size: 16px; color: var(--psd-blue-200); }
+
+  .hero-v4__title {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin: 0 0 20px;
+  }
+  @media (min-width: 640px) { .hero-v4__title { font-size: 42px; } }
+  @media (min-width: 1024px) { .hero-v4__title { font-size: 50px; } }
+  .hero-v4__title-accent { color: var(--psd-blue-200); }
+
+  .hero-v4__subtitle {
+    font-size: 16px;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.6;
+    margin: 0 0 32px;
+    max-width: 460px;
+  }
+  .hero-v4__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; }
+  .hero-v4__play {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+  }
+  .hero-v4__play-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease;
+  }
+  .hero-v4__play:hover .hero-v4__play-icon { background: rgba(255,255,255,0.28); }
+
+  .hero-v4__gallery {
+    position: static;
+    margin-top: 40px;
+    width: 100%;
+    max-width: 280px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-2);
+  }
+  @media (min-width: 1024px) {
+    .hero-v4__gallery { position: absolute; top: 50%; right: 40px; transform: translateY(-50%); margin-top: 0; }
+  }
+  .hero-v4__gallery-track { position: relative; aspect-ratio: 4 / 5; background: var(--psd-primary-dark); }
+  .hero-v4__gallery-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.6s ease; }
+  .hero-v4__gallery-slide.is-active { opacity: 1; }
+  .hero-v4__gallery-slide img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-v4__gallery-dots {
+    position: absolute;
+    bottom: 16px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    z-index: 2;
+  }
+  .hero-v4__gallery-dots button {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  .hero-v4__gallery-dots button.is-active { background: #fff; transform: scale(1.25); }
+</style>
+
+<script>
+  const gallery = document.getElementById('psd-hero-gallery');
+  if (gallery) {
+    const slides = gallery.querySelectorAll('.hero-v4__gallery-slide');
+    const dots = gallery.querySelectorAll<HTMLButtonElement>('.hero-v4__gallery-dots button');
+    let current = 0;
+    let timer: number;
+
+    const goTo = (i: number) => {
+      const idx = (i + slides.length) % slides.length;
+      slides.forEach((s) => s.classList.remove('is-active'));
+      dots.forEach((d) => d.classList.remove('is-active'));
+      slides[idx].classList.add('is-active');
+      dots[idx].classList.add('is-active');
+      current = idx;
+    };
+
+    const restart = () => {
+      clearInterval(timer);
+      timer = window.setInterval(() => goTo(current + 1), 4000);
+    };
+
+    dots.forEach((dot) =>
+      dot.addEventListener('click', () => {
+        goTo(Number(dot.dataset.idx));
+        restart();
+      })
+    );
+
+    restart();
+  }
+</script>

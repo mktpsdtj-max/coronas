@@ -1,0 +1,89 @@
+---
+// Cierre de embudo: título, subtítulo, botones y fila de contacto.
+import { useTranslations, contact, type Lang } from '../i18n/ui';
+
+export interface CtaData {
+  title: string;
+  subtitle: string;
+  primary: string;
+  secondary?: string;
+}
+
+interface Props { lang: Lang; data: CtaData; }
+const { lang, data } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section id="contacto" class="cta-final">
+  <div class="cta-final__inner psd-reveal">
+    <h2 class="cta-final__title">{data.title}</h2>
+    <p class="cta-final__subtitle">{data.subtitle}</p>
+
+    <div class="cta-final__actions">
+      <a href={`tel:${contact.tollFree}`} class="btn btn--white btn--full">{data.primary}</a>
+      {data.secondary && (
+        <a href={contact.whatsapp} class="btn btn--ghost-light btn--full">{data.secondary}</a>
+      )}
+    </div>
+
+    <div class="contact-row">
+      <a href={`tel:${contact.tollFree}`} class="contact-pill">
+        <span class="material-symbols-outlined" style="font-size:18px;">call</span> {t('contact.tollFree')}
+      </a>
+      <a href={contact.whatsapp} class="contact-pill">
+        <span class="material-symbols-outlined" style="font-size:18px;">chat</span> {t('contact.whatsapp')}
+      </a>
+      <a href="#por-que-tijuana" class="contact-pill">
+        <span class="material-symbols-outlined" style="font-size:18px;">flight_takeoff</span> {t('contact.border')}
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-final { background: var(--psd-primary); padding: 80px 0 96px; text-align: center; }
+  .cta-final__inner { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+  .cta-final__title {
+    font-size: 30px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin: 0 0 20px;
+  }
+  @media (min-width: 640px) { .cta-final__title { font-size: 36px; } }
+  .cta-final__subtitle { font-size: 16px; color: var(--psd-blue-200); margin: 0 0 40px; line-height: 1.6; }
+
+  .cta-final__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  @media (min-width: 640px) { .cta-final__actions { flex-direction: row; } }
+
+  .contact-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  .contact-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 16px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255,255,255,0.2);
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+  .contact-pill:hover { background: rgba(255,255,255,0.2); }
+</style>

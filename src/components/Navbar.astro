@@ -1,0 +1,103 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+import type { NavLink } from '../data/content';
+
+interface Props {
+  lang: Lang;
+  links: NavLink[];
+  altHref: string;
+}
+
+const { lang, links, altHref } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<header class="navbar">
+  <div class="container navbar__inner">
+    <a href={`/${lang}/`} class="navbar__brand">
+      <div class="navbar__logo"><span class="material-symbols-outlined">sentiment_satisfied</span></div>
+      <span class="navbar__name">{t('brand.name')}</span>
+    </a>
+
+    <nav class="navbar__links">
+      {links.map((link) => <a href={link.href}>{link.label}</a>)}
+    </nav>
+
+    <div class="navbar__right">
+      <a href={altHref} class="lang-switch" aria-label={t('nav.switchLabel')}>
+        <span class="lang-switch__flag">{t('nav.switchFlag')}</span>
+        {t('nav.switchText')}
+      </a>
+      <a href="#contacto" class="btn btn--accent btn--sm navbar__cta">
+        {t('nav.bookNow')}
+        <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .navbar {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--psd-blue-100);
+  }
+  .navbar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+  }
+  .navbar__brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .navbar__logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--psd-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .navbar__logo :global(.material-symbols-outlined) { color: #fff; font-size: 18px; }
+  .navbar__name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--psd-primary);
+    letter-spacing: -0.01em;
+  }
+
+  .navbar__links { display: none; gap: 32px; align-items: center; }
+  @media (min-width: 1024px) { .navbar__links { display: flex; } }
+  .navbar__links a {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(0, 62, 122, 0.8);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .navbar__links a:hover { color: var(--psd-accent); }
+
+  .navbar__right { display: flex; align-items: center; gap: 12px; }
+  .navbar__cta { display: none; }
+  @media (min-width: 640px) { .navbar__cta { display: inline-flex; } }
+
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    border: 1px solid var(--psd-blue-200);
+    background: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--psd-primary);
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+  .lang-switch:hover { background: var(--psd-blue-100); }
+  .lang-switch__flag { font-size: 16px; line-height: 1; }
+</style>

@@ -1,0 +1,18 @@
+---
+// La raíz del subdominio manda al idioma por defecto.
+// Meta-refresh para que funcione en build estático (sin servidor).
+const target = '/es/';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>Coronas Dentales en Tijuana | Perfect Smile Dental</title>
+  </head>
+  <body>
+    <p>Redirigiendo a <a href={target}>Perfect Smile Dental</a>…</p>
+  </body>
+</html>
